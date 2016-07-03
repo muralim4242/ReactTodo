@@ -1,7 +1,7 @@
 {
-  "name": "reactTimerApp",
+  "name": "reactTodo",
   "version": "1.0.0",
-  "description": "React Weather App",
+  "description": "React Todo App",
   "main": "index.js",
   "scripts": {
     "test": "karma start",

@@ -12,14 +12,29 @@ describe("TodoApp", () => {
     })
 
     it("should add todo to todos state on handleAddNewTodo", () => {
-      var todoText="Hay";
-      var todoApp=TestUtils.renderIntoDocument(<TodoApp/>);
+        var todoText = "Hay";
+        var todoApp = TestUtils.renderIntoDocument(<TodoApp/>);
 
-      todoApp.setState({
-        todos:[]
-      })
-      todoApp.handleAddNewTodo(todoText);
+        todoApp.setState({todos: []})
+        todoApp.handleAddNewTodo(todoText);
 
-      expect(todoApp.state.todos[0].value).toBe(todoText);
+        expect(todoApp.state.todos[0].value).toBe(todoText);
+    })
+
+    it("should toggle completed when handleToggle called", () => {
+        var todos = [
+            {
+                id: 11,
+                value: "hey",
+                completed: false
+            }
+        ]
+
+        var todoApp = TestUtils.renderIntoDocument(<TodoApp/>);
+        todoApp.setState({todos: todos});
+
+        expect(todoApp.state.todos[0].completed).toBe(false);
+        todoApp.handleToggle(11);
+        expect(todoApp.state.todos[0].completed).toBe(true);
     })
 })
