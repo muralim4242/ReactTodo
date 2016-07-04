@@ -18,5 +18,14 @@ module.exports = {
             localStorage.setItem("todos", JSON.stringify(todos));
             return todos;
         }
+    },
+    filterTodos: (todos, searchCompleted, searchText) => {
+        var filteredTodos = todos;
+
+        filteredTodos = filteredTodos.filter((todo) => {
+            return !todo.completed || searchCompleted;
+        })
+
+        return filteredTodos;
     }
 };

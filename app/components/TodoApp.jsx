@@ -30,7 +30,7 @@ var TodoApp = React.createClass({
         });
     },
     handleSearch: function(searchCompleted, searchText) {
-        alert("searchCompleted: " + searchCompleted + " and searchText: " + searchText);
+    //    alert("searchCompleted: " + searchCompleted + " and searchText: " + searchText);
         this.setState({searchCompleted: searchCompleted, searchText: searchText});
     },
     handleToggle: function(id) {
@@ -44,11 +44,12 @@ var TodoApp = React.createClass({
         this.setState({todos: updatedTodos})
     },
     render: function() {
-        var {todos} = this.state;
+        var {todos,searchCompleted,searchText} = this.state;
+        var filteredTodos=TodoApi.filterTodos(todos,searchCompleted,searchText);
         return (
             <div>
                 <TodoSearch onSearch={this.handleSearch}/>
-                <TodoList todos={todos} onToggle={this.handleToggle}/>
+                <TodoList todos={filteredTodos} onToggle={this.handleToggle}/>
                 <TodoAddForm onAddNewTodo={this.handleAddNewTodo}/>
             </div>
         );

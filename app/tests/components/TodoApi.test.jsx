@@ -68,4 +68,34 @@ describe("TodoApi", () => {
 
         })
     })
+
+    describe("filterTodos", () => {
+        var todos = [
+            {
+                id: 11,
+                value: "test",
+                completed: false
+            }, {
+                id: 12,
+                value: "test",
+                completed: true
+            }, {
+                id: 13,
+                value: "test",
+                completed: false
+            }
+        ]
+
+        it("should return all array if showcomplted is true", () => {
+            var actualValue = TodoApi.filterTodos(todos, true, "");
+
+            expect(actualValue.length).toEqual(todos.length);
+        })
+
+        it("should return non-completed todo array if showcomplted is false", () => {
+            var actualValue = TodoApi.filterTodos(todos, false, "");
+
+            expect(actualValue.length).toEqual(2);
+        })
+    })
 })
