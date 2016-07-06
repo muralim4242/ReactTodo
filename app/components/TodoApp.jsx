@@ -4,19 +4,14 @@ var uuid = require("node-uuid");
 var TodoList = require("TodoList");
 var TodoAddForm = require("TodoAddForm");
 var TodoSearch = require("TodoSearch");
-var TodoApi=require("TodoApi");
+var TodoApi = require("TodoApi");
 
 var TodoApp = React.createClass({
     getInitialState: function() {
-        return {
-            searchCompleted: false,
-            searchText: "",
-            todos: TodoApi.getTodos()
-        }
+        return {searchCompleted: false, searchText: "", todos: TodoApi.getTodos()}
     },
-    componentDidUpdate:function()
-    {
-      TodoApi.setTodos(this.state.todos);
+    componentDidUpdate: function() {
+        TodoApi.setTodos(this.state.todos);
     },
     handleAddNewTodo: function(newTodo) {
         this.setState({
@@ -30,8 +25,8 @@ var TodoApp = React.createClass({
         });
     },
     handleSearch: function(searchCompleted, searchText) {
-    //    alert("searchCompleted: " + searchCompleted + " and searchText: " + searchText);
-        this.setState({searchCompleted: searchCompleted, searchText: searchText});
+        //    alert("searchCompleted: " + searchCompleted + " and searchText: " + searchText);
+        this.setState({searchCompleted: searchCompleted, searchText: searchText.toLowerCase()});
     },
     handleToggle: function(id) {
         var updatedTodos = this.state.todos.map((todo) => {
@@ -44,8 +39,8 @@ var TodoApp = React.createClass({
         this.setState({todos: updatedTodos})
     },
     render: function() {
-        var {todos,searchCompleted,searchText} = this.state;
-        var filteredTodos=TodoApi.filterTodos(todos,searchCompleted,searchText);
+        var {todos, searchCompleted, searchText} = this.state;
+        var filteredTodos = TodoApi.filterTodos(todos, searchCompleted, searchText);
         return (
             <div>
                 <TodoSearch onSearch={this.handleSearch}/>
