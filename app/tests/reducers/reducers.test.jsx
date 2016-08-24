@@ -32,13 +32,13 @@ describe("Reducers", () => {
         it("should add todo to todos array", () => {
             var action = {
                 type: "ADD_TODO",
-                value: "walk a dog"
+                todo: "walk a dog"
             }
 
             var res = reducers.todosReducer(df([]), df(action));
 
             expect(res.length).toEqual(1);
-            expect(res[0].value).toEqual(action.value);
+            expect(res[0].value).toEqual(action.todo);
 
         })
 

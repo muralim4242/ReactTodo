@@ -21,11 +21,12 @@ export var showCompltedReducer = (state = false, action) => {
 
 export var todosReducer = (state = [], action) => {
     switch (action.type) {
+
         case "ADD_TODO":
             return [
                 ...state, {
                     id: uuid(),
-                    value: action.value,
+                    value: action.todo,
                     completed: false,
                     createdAt: moment().unix(),
                     completedAt: undefined
@@ -43,6 +44,9 @@ export var todosReducer = (state = [], action) => {
                             ? moment().unix()
                             : undefined
                     }
+                }
+                else {
+                  return todo;
                 }
             });
             // case "TOGGLE_TODO":
