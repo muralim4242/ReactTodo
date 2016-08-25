@@ -1,48 +1,20 @@
 var React = require("react");
-var uuid = require("node-uuid");
-var moment = require("moment");
 
 import TodoList from "TodoList";
 import TodoAddForm from "TodoAddForm";
 import TodoSearch from "TodoSearch";
-var TodoApi = require("TodoApi");
 
 var TodoApp = React.createClass({
-    getInitialState: function() {
-        return {searchCompleted: false, searchText: "", todos: TodoApi.getTodos()}
-    },
-    componentDidUpdate: function() {
-        TodoApi.setTodos(this.state.todos);
-    },
-    handleAddNewTodo: function(newTodo) {
-        this.setState({
-            todos: [
-                ...this.state.todos, {
-                    id: uuid(),
-                    value: newTodo,
-                    completed: false,
-                    createdAt: moment().unix(),
-                    completedAt: undefined
-                }
-            ]
-        });
-    },
-    handleSearch: function(searchCompleted, searchText) {
-        //    alert("searchCompleted: " + searchCompleted + " and searchText: " + searchText);
-        this.setState({searchCompleted: searchCompleted, searchText: searchText.toLowerCase()});
-    },
     render: function() {
-        var {todos, searchCompleted, searchText} = this.state;
-        var filteredTodos = TodoApi.filterTodos(todos, searchCompleted, searchText);
         return (
             <div>
                 <h1 className="page-title">Todo App</h1>
                 <div className="row">
                   <div className="column small-centered small-11 medium-6 large-5">
                     <div className="container">
-                      <TodoSearch onSearch={this.handleSearch}/>
+                      <TodoSearch/>
                       <TodoList/>
-                      <TodoAddForm onAddNewTodo={this.handleAddNewTodo}/>
+                      <TodoAddForm/>
                     </div>
                   </div>
                 </div>

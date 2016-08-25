@@ -22,10 +22,29 @@ describe("Action", () => {
         expect(res).toEqual(action);
     })
 
+    it("Should generate addTodos action object", () => {
+        var todos = [
+            {
+                id: 1,
+                value: "murali",
+                completed: false,
+                completedAt: undefined,
+                createdAt: 500
+            }
+        ];
+        var action = {
+            type: "SET_TODOS",
+            todos
+        }
+
+        var res = actions.setTodos(todos);
+        expect(res).toEqual(action);
+    })
+
     it("Should generate toggle todo action", () => {
         var action = {
             type: "TOGGLE_TODO",
-            id:1
+            id: 1
         }
 
         var res = actions.toggleTodo(action.id);
