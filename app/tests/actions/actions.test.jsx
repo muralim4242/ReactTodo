@@ -1,85 +1,147 @@
-import configureMockStore from "redux-mock-store";
-import thunk from "redux-thunk";
-var expect = require("expect");
-var actions = require("actions");
+import configureMockStore from 'redux-mock-store';
+import thunk from 'redux-thunk';
+var expect = require('expect');
+
+import firebase, {firebaseRef} from 'app/firebase/';
+var actions = require('actions');
 
 var createMockStore = configureMockStore([thunk]);
-describe("Action", () => {
-    it("Should generate setSearchText action", () => {
-        var action = {
-            type: "SET_SEARCH_TEXT",
-            searchText: "murali"
-        }
 
-        var res = actions.setSearchText(action.searchText);
-        expect(res).toEqual(action);
-    })
+describe('Actions', () => {
+  it('should generate search text action', () => {
+    var action = {
+      type: 'SET_SEARCH_TEXT',
+      searchText: 'Some search text'
+    };
+    var res = actions.setSearchText(action.searchText);
 
-    it("Should generate addTodo action", () => {
-        var action = {
-            type: "ADD_TODO",
-            todo: {
-                id: 1,
-                value: "murali",
-                completed: false,
-                createdAt: 500
-            }
-        }
+    expect(res).toEqual(action);
+  });
 
-        var res = actions.addTodo(action.todo);
-        expect(res).toEqual(action);
-    })
+  it('should generate toggle show completed action', () => {
+    var action = {
+      type: 'TOGGLE_SHOW_COMPLETED'
+    };
+    var res = actions.toggleShowCompleted();
 
-    it("shoud create todo and dispatch ADD_TODO acton", (done) => {
-        const store = createMockStore({});
-        const myTodoText = "Add time entry";
+    expect(res).toEqual(action);
+  });
 
-        store.dispatch(actions.startAddTodo(myTodoText)).then(() => {
-            const actions = store.getActions();
-            expect(actions[0]).toInclude({type: "ADD_TODO"});
-            expect(actions[0].todo).toInclude({value: myTodoText})
-            done();
-        }).catch(done);
-    })
+  it('should generate add todo action', () => {
+    var action = {
+      type: 'ADD_TODO',
+      todo: {
+        id: '123abc',
+        value: 'Anything we like',
+        completed: false,
+        createdAt: 0
+      }
+    };
+    var res = actions.addTodo(action.todo);
 
-    it("Should generate addTodos action object", () => {
-        var todos = [
-            {
-                id: 1,
-                value: "murali",
-                completed: false,
-                completedAt: undefined,
-                createdAt: 500
-            }
-        ];
-        var action = {
-            type: "SET_TODOS",
-            todos
-        }
+    expect(res).toEqual(action);
+  });
 
-        var res = actions.setTodos(todos);
-        expect(res).toEqual(action);
-    })
+  it('should create todo and dispatch ADD_TODO', (done) => {
+    const store = createMockStore({});
+    const todoText = 'My todo item';
 
-    it("Should generate update todo action", () => {
-        var action = {
-            type: "UPDATE_TODO",
-            id: 1,
-            updated:{
-              completed:false
-            }
-        }
+    store.dispatch(actions.startAddTodo(todoText)).then(() => {
+      const actions = store.getActions();
+      expect(actions[0]).toInclude({
+        type: 'ADD_TODO'
+      });
+      expect(actions[0].todo).toInclude({
+        value: todoText
+      });
+      done();
+    }).catch(done);
+  });
 
-        var res = actions.updateTodo(action.id,action.updated);
-        expect(res).toEqual(action);
-    })
+  it('should generate add todos action object', () => {
+    var todos = [{
+      id: '111',
+      value: 'anything',
+      completed: false,
+      completedAt: undefined,
+      createdAt: 33000
+    }];
+    var action = {
+      type: 'ADD_TODOS',
+      todos
+    };
+    var res = actions.setTodos(todos);
 
-    it("Should generate show completed action", () => {
-        var action = {
-            type: "TOGGLE_SHOW_COMPLETED"
-        }
+    expect(res).toEqual(action);
+  });
 
-        var res = actions.toggleShowCompleted();
-        expect(res).toEqual(action);
-    })
-})
+  it('should generate update todo action', () => {
+    var action = {
+      type: 'UPDATE_TODO',
+      id: '123',
+      updates: {completed: false}
+    };
+    var res = actions.updateTodo(action.id, action.updates);
+
+    expect(res).toEqual(action);
+  });
+
+  describe('Tests with firebase todos', () => {
+    var testTodoRef;
+
+    beforeEach((done) => {
+      var todosRef = firebaseRef.child('todos');
+
+      todosRef.remove().then(() => {
+        testTodoRef = firebaseRef.child('todos').push();
+
+        return testTodoRef.set({
+          value: 'Something to do',
+          completed: false,
+          createdAt: 23453453
+        })
+      })
+      .then(() => done())
+      .catch(done);
+    });
+
+    afterEach((done) => {
+      testTodoRef.remove().then(() => done());
+    });
+
+    it('should toggle todo and dispatch UPDATE_TODO action', (done) => {
+      const store = createMockStore({});
+      const action = actions.startToggleTodo(testTodoRef.key, true);
+
+      store.dispatch(action).then(() => {
+        const mockActions = store.getActions();
+
+        expect(mockActions[0]).toInclude({
+          type: 'UPDATE_TODO',
+          id: testTodoRef.key
+        });
+        expect(mockActions[0].updates).toInclude({
+          completed: true
+        });
+        expect(mockActions[0].updates.completedAt).toExist();
+
+        done();
+      }, done);
+    });
+
+    it('should populate todos and dispatch ADD_TODOS', (done) => {
+      const store = createMockStore({});
+      const action = actions.startAddTodos();
+
+      store.dispatch(action).then(() => {
+        const mockActions = store.getActions();
+
+        expect(mockActions[0].type).toEqual('ADD_TODOS');
+        expect(mockActions[0].todos.length).toEqual(1);
+        expect(mockActions[0].todos[0].value).toEqual('Something to do');
+
+        done();
+      }, done)
+    });
+  });
+});
